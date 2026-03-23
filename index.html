@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه نوبت دهی و راهنمایی بیماران | گروه جراحی اعصاب پروفسور گیو شریفی</title>
+
+    <!-- Tailwind CSS (local) - در پوشه js قرار دهید -->
+    <!-- <script src="js/tailwind.js"></script> -->
+
+    <!-- Three.js (local) - در پوشه js قرار دهید -->
+    <!-- <script src="js/three.min.js"></script> -->
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome 7.1.0 (Free) -->
+    <link rel="stylesheet" href="./js/tailwind.min.css">
+    <!-- Three.js -->
+    <script src="./js/three.min.js"></script>
+
+    <!-- Fonts -->
+    <style>
+        @font-face {
+            font-family: 'IRANYekan';
+            src: url('iranyekan/IRANYekanWebRegular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'IRANYekan';
+            src: url('iranyekan/IRANYekanWebMedium.woff2') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'IRANYekan';
+            src: url('iranyekan/IRANYekanWebBold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        * {
+            font-family: 'IRANYekan', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #eef5ff 0, #f5f7fb 40%, #f9fafb 100%);
+        }
+        #intro {
+            background: #02040a;
+            color: #f8fafc;
+            position: relative;
+            overflow: hidden;
+        }
+        #intro::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(1.5px 1.5px at 50px 40px, rgba(255,255,255,0.6), transparent), radial-gradient(1px 1px at 120px 80px, rgba(255,255,255,0.5), transparent), radial-gradient(1.5px 1.5px at 200px 20px, rgba(255,255,255,0.4), transparent), radial-gradient(1px 1px at 280px 120px, rgba(255,255,255,0.5), transparent), radial-gradient(1.5px 1.5px at 350px 60px, rgba(255,255,255,0.3), transparent), radial-gradient(1px 1px at 420px 180px, rgba(255,255,255,0.4), transparent), radial-gradient(1.5px 1.5px at 80px 200px, rgba(255,255,255,0.4), transparent), radial-gradient(1px 1px at 160px 280px, rgba(255,255,255,0.5), transparent), radial-gradient(1.5px 1.5px at 240px 220px, rgba(255,255,255,0.3), transparent), radial-gradient(1px 1px at 320px 320px, rgba(255,255,255,0.4), transparent), radial-gradient(1.5px 1.5px at 400px 260px, rgba(255,255,255,0.35), transparent);
+            background-size: 450px 350px;
+            background-repeat: repeat;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+        #intro .text-slate-900 { color: #f1f5f9 !important; }
+        #intro .text-slate-700 { color: #cbd5e1 !important; }
+        #intro .text-slate-600 { color: #94a3b8 !important; }
+        #intro .text-sky-700 { color: #38bdf8 !important; }
+        #intro .border-slate-100, #intro .border-slate-200 { border-color: rgba(148,163,184,0.3) !important; }
+        #intro .glass-card { background: rgba(30,41,59,0.6); backdrop-filter: blur(16px); }
+        #intro .bg-emerald-50 { background: rgba(16,185,129,0.2) !important; }
+        #intro .text-emerald-700 { color: #6ee7b7 !important; }
+        #intro .bg-emerald-500 { background: #34d399 !important; }
+        #hero-slider-wrap { min-height: 280px; height: min(80vw, 340px); }
+        @media (min-width: 768px) {
+            #hero-slider-wrap { height: min(42vh, 420px) !important; min-height: 360px !important; max-width: none; }
+        }
+        #hero-slider-track::-webkit-scrollbar { display: none; }
+        .hero-slider .slide-item { flex: 0 0 auto; width: min(85vw, 280px); height: 100%; min-height: 260px; border-radius: 16px; overflow: hidden; border: 2px solid rgba(0,212,255,0.4); box-shadow: 0 0 20px rgba(0,212,255,0.15); snap-align: center; user-select: none; -webkit-user-drag: none; }
+        @media (min-width: 768px) { .hero-slider .slide-item { width: min(90%, 320px); min-height: 320px; } }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        #services {
+            background: #02040a;
+            color: #f8fafc;
+            position: relative;
+            overflow: hidden;
+        }
+        #services::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(1.5px 1.5px at 50px 40px, rgba(255,255,255,0.6), transparent), radial-gradient(1px 1px at 120px 80px, rgba(255,255,255,0.5), transparent), radial-gradient(1.5px 1.5px at 200px 20px, rgba(255,255,255,0.4), transparent), radial-gradient(1px 1px at 280px 120px, rgba(255,255,255,0.5), transparent), radial-gradient(1.5px 1.5px at 350px 60px, rgba(255,255,255,0.3), transparent), radial-gradient(1px 1px at 420px 180px, rgba(255,255,255,0.4), transparent), radial-gradient(1.5px 1.5px at 80px 200px, rgba(255,255,255,0.4), transparent), radial-gradient(1px 1px at 160px 280px, rgba(255,255,255,0.5), transparent), radial-gradient(1.5px 1.5px at 240px 220px, rgba(255,255,255,0.3), transparent), radial-gradient(1px 1px at 320px 320px, rgba(255,255,255,0.4), transparent), radial-gradient(1.5px 1.5px at 400px 260px, rgba(255,255,255,0.35), transparent);
+            background-size: 450px 350px;
+            background-repeat: repeat;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+        .service-card {
+            background: rgba(2,4,10,0.7);
+            border: 2px solid rgba(0,212,255,0.35);
+            backdrop-filter: blur(12px);
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0,212,255,0.25), 0 0 30px rgba(0,212,255,0.1);
+            border-color: rgba(0,212,255,0.7);
+        }
+        .service-card img {
+            mix-blend-mode: screen;
+            transition: filter 0.35s ease, transform 0.35s ease;
+        }
+        .service-card:hover img {
+            filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.5)) brightness(1.15);
+            transform: scale(1.08);
+        }
+    </style>
+</head>
+
+
+<body class="text-slate-900">
+    <!-- Page Wrapper -->
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="w-full border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-30">
+            <div class="max-w-6xl mx-auto px-4 lg:px-6 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-sky-600/10 flex items-center justify-center text-sky-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5 shrink-0" fill="currentColor"><path opacity=".4" d="M8 272c0 26.2 12.6 49.4 32 64-10 13.4-16 30-16 48 0 44.2 35.8 80 80 80 .7 0 1.3 0 2 0 7.1 27.6 32.2 48 62 48l64 0 0-512-56 0c-30.9 0-56 25.1-56 56l0 24c-44.2 0-80 35.8-80 80 0 15 4.1 29 11.2 40.9-25.7 13.3-43.2 40.1-43.2 71.1zM280 0l0 512 64 0c29.8 0 54.9-20.4 62-48 .7 0 1.3 0 2 0 44.2 0 80-35.8 80-80 0-18-6-34.6-16-48 19.4-14.6 32-37.8 32-64 0-30.9-17.6-57.8-43.2-71.1 7.1-12 11.2-26 11.2-40.9 0-44.2-35.8-80-80-80l0-24c0-30.9-25.1-56-56-56L280 0z"/><path d="M232 0l48 0 0 512-48 0 0-512z"/></svg>
+                    </div>
+                <div>
+                        <p class="text-xs text-sky-700 font-semibold">گروه جراحی اعصاب</p>
+                        <p class="text-sm font-bold text-slate-800">پروفسور گیو شریفی</p>
+                </div>
+            </div>
+
+                <nav class="hidden md:flex items-center gap-6 lg:gap-8 text-xs text-slate-600">
+                    <a href="#intro" class="hover:text-sky-700 transition-colors flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-[13px] h-[13px] shrink-0 text-sky-600" fill="currentColor"><path opacity=".4" d="M0 160l448 0 0 320-448 0 0-320zM102.2 344.1l92.7 92.7 16.5-22.7 122.1-167.9 14.1-19.4-38.8-28.2-14.1 19.4-105.6 145.2-53-53-33.9 33.9z"/><path d="M347.7 226.8l-14.1 19.4-122.1 167.9-16.5 22.7-92.7-92.7 33.9-33.9 53 53 105.6-145.2 14.1-19.4 38.8 28.2zM160 64l128 0 0-64 64 0 0 64 96 0 0 96-448 0 0-96 96 0 0-64 64 0 0 64z"/></svg>
+                        <span>سامانه نوبت دهی و راهنمایی</span>
+                    </a>
+                    <a href="#services" class="hover:text-sky-700 transition-colors flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-[13px] h-[13px] shrink-0 text-sky-600" fill="currentColor"><path opacity=".4" d="M0 96l0 384 512 0 0-384-144 0 0-96-224 0 0 96-144 0zM168 256l56 0 0-56 64 0 0 56 56 0 0 64-56 0 0 56-64 0 0-56-56 0 0-64zM192 48l128 0 0 48-128 0 0-48z"/><path d="M288 200l-64 0 0 56-56 0 0 64 56 0 0 56 64 0 0-56 56 0 0-64-56 0 0-56z"/></svg>
+                        <span>خدمات جراحی</span>
+                    </a>
+                    <a href="#process" class="hover:text-sky-700 transition-colors flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="w-[13px] h-[13px] shrink-0 text-sky-600" fill="currentColor"><path opacity=".4" d="M32 32l0 416 77.7-240 402.3 0 0-128-192 0-64-48-224 0z"/><path d="M32 448l466.3 0 77.7-240-466.3 0-77.7 240z"/></svg>
+                        <span>مراحل بررسی پرونده</span>
+                    </a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <a href="https://gsharifi.com" target="_blank" class="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-medium bg-sky-600 text-white hover:bg-sky-700 transition-colors gap-1.5 sm:gap-2">
+                        <img src="FontAwesome.Pro.7.1.0/sharp-duotone-solid/globe.svg" alt="" class="w-3 h-3 shrink-0 brightness-0 invert" aria-hidden="true">
+                        <span>وب‌سایت اصلی مرکز</span>
+                    </a>
+                   
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+        <main class="flex-1">
+            <!-- Hero / Intro -->
+            <section id="intro" class="py-10 md:py-14 relative">
+                <div class="max-w-6xl mx-auto px-4 lg:px-6 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-center relative z-10">
+                    <!-- Hero Slider - موبایل: بالا و وسط‌چین، دسکتاپ: راست -->
+                    <div id="hero-slider-wrap" class="hero-slider order-1 md:order-2 w-full mx-auto md:mx-0 max-w-[320px] md:max-w-none relative">
+                        <div id="hero-slider-track" class="flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth gap-3 py-2 px-12 md:px-14 cursor-grab active:cursor-grabbing h-full min-h-[260px] md:min-h-[320px]" style="scrollbar-width: none; -ms-overflow-style: none;">
+                            <!-- 20 images injected by JS -->
+                        </div>
+                        <button type="button" id="hero-slider-prev" class="hero-slider-btn absolute top-1/2 -translate-y-1/2 right-2 w-10 h-10 rounded-full bg-[#02040a]/80 border-2 border-[#00d4ff] text-[#00d4ff] flex items-center justify-center hover:bg-[#00d4ff]/20 transition-colors shadow-lg z-10" aria-label="قبلی">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-3.5 h-3.5 shrink-0 text-[#00d4ff]" fill="currentColor"><path opacity=".4" d="M317.5 256L294.9 278.6 102.9 470.6 80.3 493.3 35 448 57.6 425.4 227 256 57.6 86.6 35 64 80.3 18.7 102.9 41.4 294.9 233.4 317.5 256z"/><path d=""/></svg>
+                        </button>
+                        <button type="button" id="hero-slider-next" class="hero-slider-btn absolute top-1/2 -translate-y-1/2 left-2 w-10 h-10 rounded-full bg-[#02040a]/80 border-2 border-[#00d4ff] text-[#00d4ff] flex items-center justify-center hover:bg-[#00d4ff]/20 transition-colors shadow-lg z-10" aria-label="بعدی">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-3.5 h-3.5 shrink-0 text-[#00d4ff]" fill="currentColor"><path opacity=".4" d="M3 256l22.6 22.6 192 192 22.6 22.6 45.3-45.3-22.6-22.6-169.4-169.4 169.4-169.4 22.6-22.6-45.3-45.3-22.6 22.6-192 192-22.6 22.6z"/><path d=""/></svg>
+                                </button>
+                            </div>
+                    <!-- Text - موبایل: پایین، دسکتاپ: چپ -->
+                    <div class="order-2 md:order-1">
+                      
+
+                        <h1 class="mt-4 text-2xl md:text-3xl lg:text-4xl font-bold leading-relaxed text-slate-900">
+                            سامانه نوبت دهی  
+                            گروه جراحی اعصاب پروفسور گیو شریفی
+                        </h1>
+
+                        <p class="mt-4 text-sm md:text-[13px] leading-7 text-slate-700">
+                            با توجه به تجربه درخشان و موفقیت ما در کار گروهی و مدیریت بهینه در سطح جهانی و درخواست های بسیار مختلف برآن شدیم تا سامانه ای را جهت تسهیل مدیریت برتر خدمات علمی ، پژوهشی، درمانی برای هموطنان ارزشمندمان اجرا کنیم. این درگاه جهت نوبت دهی ، راهنمایی بیماران در سطوح مختلف میباشد.
+                        </p>
+
+                        <div class="mt-6 flex flex-wrap items-center gap-3">
+                            <a href="https://visit.gsharifi.com" class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-semibold bg-sky-700 text-white shadow-sm hover:bg-sky-800 transition-colors gap-2">
+                                <i class="fa-solid fa-file-medical text-[14px]"></i>
+                                <span>شروع ثبت اطلاعات و مدارک</span>
+                            </a>
+                            <div class="flex items-center gap-3 text-[11px] text-slate-600">
+                                <div>
+                                    <p class="font-bold text-slate-900">+۲۰ سال</p>
+                                    <p>تجربه جراحی مغز و اعصاب</p>
+                        </div>
+                                <div class="w-px h-9 bg-slate-200"></div>
+                                <div>
+                                    <p class="font-bold text-slate-900">صدها</p>
+                                    <p>جراحی پیچیده موفق</p>
+                    </div>
+                        </div>
+                    </div>
+
+                        <div class="mt-6 grid grid-cols-3 gap-3 max-w-md text-center text-[11px] text-slate-600">
+                            <div class="glass-card rounded-xl py-3 px-2 border border-slate-100">
+                                <div class="mb-1 flex justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="w-3.5 h-3.5 shrink-0 text-sky-700" fill="currentColor"><path opacity=".4" d="M128 96l384 0 0 240-160 0 0-56 56 0 0-64-56 0 0-56-64 0 0 56-56 0 0 64 56 0 0 56-160 0 0-240z"/><path d="M96 32l-32 0 0 304 64 0 0-240 384 0 0 240 64 0 0-304-480 0zM0 384l0 40 56 56 528 0 56-56 0-40-640 0z"/></svg>
+                        </div>
+                                <p class="text-xs font-semibold text-slate-900 mb-1">نوبت دهی غیرحضوری</p>
+                                <p>بدون نیاز به مراجعه اولیه</p>
+                    </div>
+                            <div class="glass-card rounded-xl py-3 px-2 border border-slate-100">
+                                <div class="mb-1 flex justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-3.5 h-3.5 shrink-0 text-sky-700" fill="currentColor"><path opacity=".4" d="M344 128a120 120 0 1 1 -240 0 120 120 0 1 1 240 0z"/><path d="M164 320l120 0 0 47.4c-23.3 8.2-40 30.5-40 56.6l0 52 40 0 0-52c0-11 9-20 20-20s20 9 20 20l0 52 40 0 0-52c0-26.1-16.7-48.3-40-56.6l0-47.4 44 0 64 192-416 0 64-192 44 0 0 68.4c-16.5 7.6-28 24.3-28 43.6 0 26.5 21.5 48 48 48s48-21.5 48-48c0-19.4-11.5-36.1-28-43.6l0-68.4z"/></svg>
+                </div>
+                                <p class="text-xs font-semibold text-slate-900 mb-1">بررسی توسط تیم متخصص</p>
+                                <p>تیم چندتخصصی جراحی اعصاب</p>
+            </div>
+                            <div class="glass-card rounded-xl py-3 px-2 border border-slate-100">
+                                <div class="mb-1 flex justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="w-3.5 h-3.5 shrink-0 text-sky-700" fill="currentColor"><path opacity=".4" d="M0 32l0 480 384 0 0-480-64 0 0-32-256 0 0 32-64 0zM86.1 324.2l34.5-33.3c9.5 9.8 23.9 24.7 43.2 44.7l85.6-117.7 14.1-19.4 38.8 28.2-14.1 19.4-102.4 140.8-16.8 23.1c-8.8-9.1-30.9-32-66.2-68.6L86.1 324.2zM112 64l160 0 0 48-160 0 0-48z"/><path d="M302.3 226.7L288.2 246.1 185.8 386.9 169 410c-8.8-9.1-30.9-32-66.2-68.6l-16.7-17.3 34.5-33.3c9.5 9.8 23.9 24.7 43.2 44.7l85.6-117.7 14.1-19.4 38.8 28.2z"/></svg>
+                    </div>
+                                <p class="text-xs font-semibold text-slate-900 mb-1">پاسخ شفاف</p>
+                                <p>شرح وضعیت و مسیر درمان</p>
+                </div>
+                        </div>
+                    </div>
+
+                    <script>
+                    (function(){
+                        var AK_IMGS = ["5823371661175098670.jpg","5823371661175098672.jpg","5823371661175098674.jpg","5823371661175098675.jpg","5823371661175098676.jpg","5823371661175098678.jpg","5823371661175098679.jpg","5823371661175098680.jpg","5823371661175098682.jpg","5823371661175098689.jpg","5823371661175098690.jpg","5823371661175098691.jpg","5823371661175098693.jpg","5823371661175098694.jpg","5823371661175098695.jpg","5823371661175098697.jpg","5823371661175098698.jpg","5823371661175098699.jpg","5823371661175098700.jpg","5823371661175098701.jpg"];
+                        var BASE = "images/aks/";
+                        try { BASE = new URL("images/aks/", window.location.href).href; } catch(e){}
+                        function initHeroSlider(){
+                            var track = document.getElementById("hero-slider-track");
+                            var prevBtn = document.getElementById("hero-slider-prev");
+                            var nextBtn = document.getElementById("hero-slider-next");
+                            if(!track || !prevBtn || !nextBtn) return;
+                            for(var i=0;i<AK_IMGS.length;i++){
+                                var url = BASE + AK_IMGS[i];
+                                var div = document.createElement("div");
+                                div.className = "slide-item";
+                                var img = document.createElement("img");
+                                img.src = url;
+                                img.alt = "";
+                                img.className = "w-full h-full object-cover block";
+                                img.draggable = false;
+                                div.appendChild(img);
+                                div.dataset.url = url;
+                                div.style.cursor = "pointer";
+                                div.addEventListener("click", function(){
+                                    if(didDrag) return;
+                                    var m = document.getElementById("modalMemories");
+                                    if(m){ m.querySelector("img").src = this.dataset.url; m.style.display = "flex"; m.querySelector("img").style.transform = "scale(1)"; }
+                                });
+                                track.appendChild(div);
+                            }
+                            var slideWidth = function(){
+                                var first = track.querySelector(".slide-item");
+                                return first ? first.offsetWidth + 12 : 292;
+                            };
+                            var step = slideWidth();
+                            prevBtn.addEventListener("click", function(){ track.scrollBy({ left: step, behavior: "smooth" }); });
+                            nextBtn.addEventListener("click", function(){ track.scrollBy({ left: -step, behavior: "smooth" }); });
+                            var isDown = false, startX, scrollLeft, didDrag = false;
+                            track.addEventListener("mousedown", function(e){
+                                if(!e.target.closest(".slide-item")) return;
+                                isDown=true; didDrag=false;
+                                track.style.cursor="grabbing";
+                                startX=e.pageX-track.offsetLeft;
+                                scrollLeft=track.scrollLeft;
+                            });
+                            track.addEventListener("mouseleave", function(){ isDown=false; track.style.cursor="grab"; });
+                            track.addEventListener("mouseup", function(){ isDown=false; track.style.cursor="grab"; });
+                            track.addEventListener("mousemove", function(e){
+                                if(!isDown) return;
+                                didDrag=true;
+                                e.preventDefault();
+                                var x=e.pageX-track.offsetLeft;
+                                track.scrollLeft = scrollLeft - (x - startX);
+                            });
+                        }
+                        if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", initHeroSlider);
+                        else initHeroSlider();
+                    })();
+                    </script>
+                </div>
+            </section>
+
+
+            <!-- Section from index2 - 3D Globe with Memories (aks images) -->
+            <section id="index2-globe-section" class="relative" style="min-height: 100vh; background: #02040a;">
+                <div id="modalMemories" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 100; cursor: pointer; backdrop-filter: blur(15px);">
+                    <img id="modalMemories-img" src="" alt="بزرگنمایی" style="max-width: 85%; max-height: 85%; border: 2px solid rgba(0,212,255,0.5); border-radius: 20px; box-shadow: 0 0 50px rgba(0,212,255,0.3); transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);">
+                    </div>
+                <div id="index2-globe-container" style="width: 100%; height: 100vh; position: relative;">
+                    <div id="memory-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 2;"></div>
+                </div>
+                <script>
+                (function() {
+                    const AK_IMGS = ["5823371661175098670.jpg","5823371661175098672.jpg","5823371661175098674.jpg","5823371661175098675.jpg","5823371661175098676.jpg","5823371661175098678.jpg","5823371661175098679.jpg","5823371661175098680.jpg","5823371661175098682.jpg","5823371661175098689.jpg","5823371661175098690.jpg","5823371661175098691.jpg","5823371661175098693.jpg","5823371661175098694.jpg","5823371661175098695.jpg","5823371661175098697.jpg","5823371661175098698.jpg","5823371661175098699.jpg","5823371661175098700.jpg","5823371661175098701.jpg"];
+                    var BASE = "images/aks/";
+                    try { BASE = new URL("images/aks/", window.location.href).href; } catch(e){}
+                    function init() {
+                        var c = document.getElementById("index2-globe-container");
+                        if (!c || typeof THREE === "undefined") return;
+                        var scene = new THREE.Scene();
+                        var camera = new THREE.PerspectiveCamera(50, c.clientWidth/c.clientHeight, 0.1, 1000);
+                        camera.position.z = 20;
+                        var renderer = new THREE.WebGLRenderer({ antialias: true });
+                        renderer.setSize(c.clientWidth, c.clientHeight);
+                        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        c.appendChild(renderer.domElement);
+                        renderer.domElement.style.position = "absolute";
+                        renderer.domElement.style.top = "0";
+                        renderer.domElement.style.left = "0";
+                        renderer.domElement.style.zIndex = "1";
+                        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+                        var mainLight = new THREE.DirectionalLight(0x00d4ff, 1);
+                        mainLight.position.set(5, 3, 5);
+                        scene.add(mainLight);
+                        var starGeo = new THREE.BufferGeometry();
+                        var posArr = new Float32Array(2000 * 3);
+                        for (var i = 0; i < 2000 * 3; i++) posArr[i] = (Math.random() - 0.5) * 300;
+                        starGeo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
+                        var stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.15, color: 0xaaaaaa, transparent: true, opacity: 0.8 }));
+                        scene.add(stars);
+                        var globeGroup = new THREE.Group();
+                        scene.add(globeGroup);
+                        var globeGeo = new THREE.SphereGeometry(5, 64, 64);
+                        var globeMat = new THREE.MeshPhongMaterial({ color: 0x010510, transparent: true, opacity: 0.9, shininess: 20 });
+                        globeGroup.add(new THREE.Mesh(globeGeo, globeMat));
+                        var loader = new THREE.TextureLoader();
+                        loader.load("https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_lights_2048.png", function(t) {
+                            var canvas = document.createElement("canvas");
+                            var ctx = canvas.getContext("2d");
+                            var img = t.image;
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx.drawImage(img, 0, 0);
+                            var d = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                            var pos = [];
+                            var step = 12;
+                            for (var lat = 0; lat < canvas.height; lat += step)
+                                for (var lon = 0; lon < canvas.width; lon += step) {
+                                    var idx = (lat * canvas.width + lon) * 4;
+                                    if ((d[idx]+d[idx+1]+d[idx+2])/3 > 20) {
+                                        var phi = (lat/canvas.height)*Math.PI;
+                                        var theta = (lon/canvas.width)*(Math.PI*2)+Math.PI;
+                                        pos.push(-5.08*Math.sin(phi)*Math.cos(theta), 5.08*Math.cos(phi), 5.08*Math.sin(phi)*Math.sin(theta));
+                                    }
+                                }
+                            var dotGeo = new THREE.BufferGeometry();
+                            dotGeo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+                            globeGroup.add(new THREE.Points(dotGeo, new THREE.PointsMaterial({ size: 0.06, color: 0x00d4ff, transparent: true, opacity: 0.8 })));
+                        });
+                        var atmoGeo = new THREE.SphereGeometry(5.3, 64, 64);
+                        globeGroup.add(new THREE.Mesh(atmoGeo, new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.05, side: THREE.BackSide })));
+                        var memoryGroup = new THREE.Group();
+                        globeGroup.add(memoryGroup);
+                        var overlay = document.getElementById("memory-overlay");
+                        var overlayEls = [];
+                        var proj = new THREE.Vector3();
+                        for (var i = 0; i < 20; i++) {
+                            var phi = Math.acos(-1 + (2 * i) / 20);
+                            var theta = Math.sqrt(20 * Math.PI) * phi;
+                            var r = 7.5;
+                            var x = r * Math.sin(phi) * Math.cos(theta);
+                            var y = r * Math.sin(phi) * Math.sin(theta);
+                            var z = r * Math.cos(phi);
+                            var container = new THREE.Group();
+                            container.position.set(x, y, z);
+                            container.add(new THREE.Mesh(new THREE.RingGeometry(0.7, 0.75, 32), new THREE.MeshBasicMaterial({ color: 0x00d4ff, side: THREE.DoubleSide })));
+                            var imgPath = BASE + AK_IMGS[i];
+                            var hitArea = new THREE.Mesh(new THREE.CircleGeometry(0.75, 16), new THREE.MeshBasicMaterial({ visible: false }));
+                            hitArea.userData = { url: imgPath };
+                            container.add(hitArea);
+                            memoryGroup.add(container);
+                            var el = document.createElement("div");
+                            el.style.cssText = "position:absolute;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;overflow:hidden;border:2px solid #00d4ff;pointer-events:auto;cursor:pointer;box-sizing:border-box;";
+                            var img = document.createElement("img");
+                            img.src = imgPath;
+                            img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block;";
+                            img.draggable = false;
+                            el.appendChild(img);
+                            el.dataset.url = imgPath;
+                            el.addEventListener("click", function(e) {
+                                e.stopPropagation();
+                                var url = this.dataset.url;
+                                document.getElementById("modalMemories-img").src = url;
+                                document.getElementById("modalMemories").style.display = "flex";
+                                document.getElementById("modalMemories").querySelector("img").style.transform = "scale(1)";
+                            });
+                            overlay.appendChild(el);
+                            overlayEls.push({ container: container, el: el });
+                        }
+                        var isDrag = false;
+                        var prev = { x: 0, y: 0 };
+                        function onMove(e) {
+                            var cx = e.clientX || (e.touches && e.touches[0].clientX);
+                            var cy = e.clientY || (e.touches && e.touches[0].clientY);
+                            if (isDrag) {
+                                globeGroup.rotation.y += (cx - prev.x) * 0.005;
+                                globeGroup.rotation.x += (cy - prev.y) * 0.005;
+                                prev.x = cx; prev.y = cy;
+                            }
+                        }
+                        c.addEventListener("mousedown", function(e) { if (!e.target.closest("#memory-overlay [data-url]")) { isDrag = true; prev.x = e.clientX; prev.y = e.clientY; } });
+                        c.addEventListener("mousemove", onMove);
+                        window.addEventListener("mouseup", function() { isDrag = false; });
+                        c.addEventListener("touchstart", function(e) { if (!e.target.closest("#memory-overlay [data-url]")) { isDrag = true; prev.x = e.touches[0].clientX; prev.y = e.touches[0].clientY; } }, { passive: true });
+                        c.addEventListener("touchmove", onMove, { passive: true });
+                        window.addEventListener("touchend", function() { isDrag = false; }, { passive: true });
+                        window.addEventListener("resize", function() {
+                            var w = c.clientWidth; var h = c.clientHeight;
+                            camera.aspect = w / h;
+                            camera.updateProjectionMatrix();
+                            renderer.setSize(w, h);
+                        });
+                        document.getElementById("modalMemories").addEventListener("click", function() {
+                            this.style.display = "none";
+                            this.querySelector("img").style.transform = "scale(0.8)";
+                        });
+                        function animate() {
+                            requestAnimationFrame(animate);
+                            if (!isDrag) globeGroup.rotation.y += 0.001;
+                            stars.rotation.y += 0.0001;
+                            memoryGroup.children.forEach(function(g) { g.lookAt(camera.position); });
+                            camera.updateMatrixWorld();
+                            var w = c.clientWidth;
+                            var h = c.clientHeight;
+                            overlayEls.forEach(function(o) {
+                                o.container.getWorldPosition(proj);
+                                proj.project(camera);
+                                var px = (proj.x + 1) * 0.5 * w;
+                                var py = (1 - proj.y) * 0.5 * h;
+                                o.el.style.left = px + "px";
+                                o.el.style.top = py + "px";
+                                o.el.style.visibility = proj.z > 1 || proj.z < -1 ? "hidden" : "visible";
+                            });
+                            renderer.render(scene, camera);
+                        }
+                        animate();
+                    }
+                    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+                    else init();
+                })();
+                </script>
+            </section>
+
+            <!-- Services grid -->
+            <section id="services" class="py-12 md:py-16 relative">
+                <div class="max-w-6xl mx-auto px-4 lg:px-6 relative z-10">
+                    <h2 class="text-xl md:text-2xl font-bold text-[#00d4ff] mb-10 text-center">خدماتی که توسط گروه پروفسور گیو شریفی انجام می‌شود</h2>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/pituitary.png" alt="جراحی هیپوفیز" class="w-full h-full object-contain">
+                    </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی هیپوفیز</p>
+                    </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/skull-base.png" alt="جراحی قاعده جمجمه" class="w-full h-full object-contain">
+                </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی قاعده جمجمه</p>
+                        </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/endoscopic.png" alt="جراحی آندوسکوپی مغز" class="w-full h-full object-contain">
+                    </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی آندوسکوپی مغز</p>
+                        </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/brain-tumor.png" alt="جراحی تومورهای مغزی" class="w-full h-full object-contain">
+                    </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی تومورهای مغزی</p>
+                        </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/epilepsy.png" alt="جراحی صرع و تشنج" class="w-full h-full object-contain">
+                    </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی صرع و تشنج</p>
+                        </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/functional.png" alt="جراحی عملکردی و فانکشنال مغزی و بیوپسی" class="w-full h-full object-contain">
+                    </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی عملکردی و فانکشنال مغزی و بیوپسی</p>
+                        </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/spine.png" alt="جراحی ستون فقرات" class="w-full h-full object-contain">
+                    </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی ستون فقرات</p>
+                </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/cervical.png" alt="جراحی گردن" class="w-full h-full object-contain">
+                                </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی گردن، تنگی، دیسک و آسیب نخاعی</p>
+                                </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/thoracic.png" alt="جراحی ستون فقرات پشتی" class="w-full h-full object-contain">
+                            </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی ستون فقرات پشتی</p>
+                        </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/lumbar.png" alt="جراحی ستون فقرات کمری" class="w-full h-full object-contain">
+                    </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی ستون فقرات کمری</p>
+                </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/spinal-tumor.png" alt="جراحی تومورهای نخاع" class="w-full h-full object-contain">
+                        </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی تومورهای نخاع</p>
+                    </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/pediatric.png" alt="جراحی تومورهای مغزی و ستون فقرات اطفال" class="w-full h-full object-contain">
+                        </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی تومورهای مغزی و ستون فقرات اطفال</p>
+                        </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/vascular.png" alt="جراحی عروق مغز" class="w-full h-full object-contain">
+                    </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی عروق مغز</p>
+                                </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/peripheral-nerve.png" alt="جراحی اعصاب محیطی" class="w-full h-full object-contain">
+                                </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی اعصاب محیطی</p>
+                                </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/reconstructive.png" alt="جراحی ترمیمی اعصاب" class="w-full h-full object-contain">
+                                </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی ترمیمی اعصاب</p>
+                                </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/orbital.png" alt="جراحی تومورهای چشم" class="w-full h-full object-contain">
+                                </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی تومورهای چشم</p>
+                                </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/sinus.png" alt="جراحی تومورهای سینوسی و قاعده جمجمه" class="w-full h-full object-contain">
+                                </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی تومورهای سینوسی و قاعده جمجمه</p>
+                                </div>
+                        <div class="service-card rounded-2xl overflow-hidden p-4 flex flex-col items-center text-center">
+                            <div class="w-full aspect-square max-w-[140px] mb-3 overflow-hidden flex items-center justify-center">
+                                <img src="images/services/stereotactic.png" alt="جراحی استریوتاکتیک" class="w-full h-full object-contain">
+                                </div>
+                            <p class="text-[#00d4ff] text-xs md:text-sm font-medium leading-relaxed">جراحی استریوتاکتیک و رادیوتراپی</p>
+                                </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Process / What happens بعد از ارسال مدارک -->
+            <section id="process" class="py-10 md:py-12">
+                <div class="max-w-5xl mx-auto px-4 lg:px-6">
+                    <div class="text-center max-w-2xl mx-auto mb-8">
+                        <h2 class="text-lg md:text-xl font-bold text-slate-900 mb-2">مراحل بررسی پرونده</h2>
+                    </div>
+
+                    <div class="max-w-3xl mx-auto text-[11px] text-slate-700 mb-8">
+                        <p class="leading-6 text-center text-[12px] font-medium">
+                            پس از ارائه شرح حال و بار گذاری مدارک،  توسط گروه جراحی اعصاب پروفسور شریفی بررسی می شوند و سه تصمیم برای شما گرفته خواهد شد:
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 text-[11px] max-w-4xl mx-auto mb-6">
+                        <!-- Card 1 -->
+                        <div class="glass-card rounded-2xl border border-slate-100 p-6 flex flex-col items-center text-center shadow-sm relative overflow-hidden transition-transform hover:-translate-y-1">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-10"></div>
+                            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 4h4v4"/><path d="M14 10l6-6"/><path d="M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/><circle cx="10" cy="10" r="2"/><path d="M6 16v-1a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v1"/>
+                                </svg>
+                        </div>
+                            <p class="text-slate-700 leading-6 text-[11px] font-medium">
+                                بیماری شما با تخصص دیگر و رشته دیگر مرتبط است که به شما اعلام میشود.
+                            </p>
+                    </div>
+
+                        <!-- Card 2 -->
+                        <div class="glass-card rounded-2xl border border-slate-100 p-6 flex flex-col items-center text-center shadow-sm relative overflow-hidden transition-transform hover:-translate-y-1">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-sky-50 rounded-bl-full -z-10"></div>
+                            <div class="w-16 h-16 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><line x1="8" y1="13" x2="16" y2="13" stroke-dasharray="2 2"/>
+                                </svg>
+                        </div>
+                            <p class="text-slate-700 leading-6 text-[11px] font-medium">
+                                بیماری شما با تخصص های مرتبط با گروه جراحی اعصاب مرتبط است، نظیر: نورولوژی ، آنکولوژی و ...
+                        </p>
+                            </div>
+
+                        <!-- Card 3 -->
+                        <div class="glass-card rounded-2xl border border-slate-100 p-6 flex flex-col items-center text-center shadow-sm relative overflow-hidden transition-transform hover:-translate-y-1">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-50 rounded-bl-full -z-10"></div>
+                            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/>
+                                </svg>
+                        </div>
+                            <p class="text-slate-700 leading-6 text-[11px] font-medium">
+                                بیماری شما توسط تیم پروفسور شریفی قابل بررسی و درمان است که جهت نوبت گیری با شما هماهنگ خواهد شد.
+                            </p>
+                                </div>
+                            </div>
+
+                    <div class="mt-6 max-w-xl mx-auto text-[11px] text-amber-700 bg-amber-50 border border-amber-100 rounded-2xl px-4 py-3 leading-6 text-center">
+                        <p>
+                            دقت فرمایید هزینه بررسی مدارک در این سامانه ارتباطی با هزینه ویزیت مطب ندارد।
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+         
+
+        <!-- CTA Section -->
+        <section class="py-16 relative overflow-hidden mt-12">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-700 to-sky-800 -z-10"></div>
+            
+            <!-- Background Decorative Elements -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -z-10 mix-blend-overlay"></div>
+            <div class="absolute bottom-0 left-0 w-80 h-80 bg-sky-400/20 rounded-full blur-3xl -z-10 mix-blend-overlay"></div>
+            
+            <div class="max-w-4xl mx-auto px-4 lg:px-6 relative z-10 text-center">
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">آیا نیاز به مشاوره یا بررسی پرونده پزشکی دارید؟</h2>
+                <p class="text-blue-100 text-sm md:text-base mb-8 max-w-2xl mx-auto leading-relaxed">
+                    همین حالا مدارک پزشکی و شرح حال خود را در سامانه ثبت کنید تا توسط تیم تخصصی پروفسور گیو شریفی بررسی شده و بهترین مسیر درمانی برای شما مشخص گردد.
+                </p>
+                <a href="https://visit.gsharifi.com" class="inline-flex items-center justify-center px-8 py-3.5 bg-white text-blue-800 hover:bg-slate-50 font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    ثبت درخواست بررسی مدارک
+                </a>
+            </div>
+        </section>
+
+        <!-- Main Footer -->
+        <footer id="footer-stars" class="bg-black text-white pt-16 pb-8 border-t-4 border-sky-600 relative overflow-hidden">
+            <div class="max-w-6xl mx-auto px-4 lg:px-6 relative z-10">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16">
+                    
+                    <!-- About Us -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            درباره ما
+                        </h3>
+                        <div class="w-full h-px bg-white/20 mb-5 relative">
+                            <div class="absolute right-0 top-0 h-full w-16 bg-sky-500"></div>
+                        </div>
+                        <p class="text-slate-300 text-[13px] leading-8 text-justify">
+                            دکتر گیو شریفی متخصص جراحی مغز و ستون فقرات از دانشگاه علوم پزشکی شهید بهشتی هستند. ایشان علاوه بر تجربه بسیار در جراحی مغز و اعصاب، به عنوان استاد دانشگاه شهید بهشتی در آموزش جراحان بسیاری اهتمام ورزیده‌اند.
+                        </p>
+                    </div>
+
+                    <!-- Surgical Examples -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            نمونه هایی از اعمال جراحی
+                        </h3>
+                        <div class="w-full h-px bg-white/20 mb-5 relative">
+                            <div class="absolute right-0 top-0 h-full w-16 bg-sky-500"></div>
+                        </div>
+                        <ul class="space-y-4 text-[13px]">
+                            <li>
+                                <a href="https://gsharifi.com/pituitary-surgery/" target="_blank" class="flex items-center text-slate-300 hover:text-sky-400 transition-colors group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2 text-sky-600 group-hover:text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8l-4 4 4 4M16 12H8"/></svg>
+                                    جراحی های تومور هیپوفیز
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://gsharifi.com/surgical-examples/spinal-surgery/" target="_blank" class="flex items-center text-slate-300 hover:text-sky-400 transition-colors group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2 text-sky-600 group-hover:text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8l-4 4 4 4M16 12H8"/></svg>
+                                    جراحی ستون فقرات
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://gsharifi.com/brain-tumors/" target="_blank" class="flex items-center text-slate-300 hover:text-sky-400 transition-colors group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2 text-sky-600 group-hover:text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8l-4 4 4 4M16 12H8"/></svg>
+                                    تومورهای شایع مغزی
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://gsharifi.com/postoperative-care/" target="_blank" class="flex items-center text-slate-300 hover:text-sky-400 transition-colors group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2 text-sky-600 group-hover:text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8l-4 4 4 4M16 12H8"/></svg>
+                                    مراقبت های بعد از عمل
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            اطلاعات تماس
+                        </h3>
+                        <div class="w-full h-px bg-white/20 mb-5 relative">
+                            <div class="absolute right-0 top-0 h-full w-16 bg-sky-500"></div>
+                        </div>
+                        <ul class="space-y-4 text-[13px]">
+                            <li class="flex items-start text-slate-300 leading-7">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 mt-0.5 shrink-0 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <span>آدرس : تهران، خیابان ولیعصر، خیابان توانیر، میدان توانیر، ساختمان پزشکان طلا، طبقه ۳، واحد ۳۰</span>
+                            </li>
+                            <li class="flex items-start text-slate-300 leading-7">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 mt-0.5 shrink-0 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                <div class="flex flex-col gap-1 w-full" dir="ltr" style="text-align: right;">
+                                    <span>تلفن : 88664963-021 | 88664964-021</span>
+                                    <span>88198152-021 | 88198147-021 | 88195623-021</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start text-slate-300 leading-7">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 mt-0.5 shrink-0 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <span>نوبت دهی مطب : از 10 صبح هر روز</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-slate-400">
+                    <p>کپی رایت © تمام حقوق مطالب سایت محفوظ می باشد.</p>
+                    <p>طراحی شده برای سامانه غربالگری گروه جراحی اعصاب پروفسور گیو شریفی</p>
+                </div>
+            </div>
+        </footer>
+                            </div>
+<script>
+// ---- Globe: Real 3D Earth + Photo Circles (Three.js) ----
+(function() {
+  const AK_IMAGES = [
+    "5823371661175098670.jpg","5823371661175098672.jpg","5823371661175098674.jpg",
+    "5823371661175098675.jpg","5823371661175098676.jpg","5823371661175098678.jpg",
+    "5823371661175098679.jpg","5823371661175098680.jpg","5823371661175098682.jpg",
+    "5823371661175098689.jpg","5823371661175098690.jpg","5823371661175098691.jpg",
+    "5823371661175098693.jpg","5823371661175098694.jpg","5823371661175098695.jpg",
+    "5823371661175098697.jpg","5823371661175098698.jpg","5823371661175098699.jpg",
+    "5823371661175098700.jpg"
+  ];
+  const BASE = "images/aks/";
+
+  function initGlobe() {
+    const wrap = document.getElementById("globeCanvasWrap");
+    const canvas = document.getElementById("globeCanvas");
+    if (!wrap || !canvas) return;
+
+    const w = wrap.clientWidth || 400;
+    const h = wrap.clientHeight || 400;
+    canvas.width = w;
+    canvas.height = h;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+    camera.position.z = 3.2;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const texLoader = new THREE.TextureLoader();
+    texLoader.crossOrigin = "anonymous";
+    const earthTex = texLoader.load(
+      "https://upload.wikimedia.org/wikipedia/commons/c/c3/Solarsystemscope_texture_2k_earth_daymap.jpg",
+      undefined,
+      undefined,
+      function() {}
+    );
+    const earthGeom = new THREE.SphereGeometry(1, 48, 32);
+    const earthMat = new THREE.MeshBasicMaterial({ map: earthTex });
+    const earth = new THREE.Mesh(earthGeom, earthMat);
+    group.add(earth);
+
+    const circles = [];
+    const circleSize = 0.12;
+    const loader = new THREE.TextureLoader();
+
+    function createCircle(i) {
+      const geom = new THREE.CircleGeometry(circleSize, 24);
+      const tex = loader.load(BASE + AK_IMAGES[i], undefined, undefined, function() {
+        tex.image = null;
+      });
+      const mat = new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      const mesh = new THREE.Mesh(geom, mat);
+      mesh.userData = { enlarged: false };
+      const phi = Math.acos(-1 + (2 * (i + 0.5)) / AK_IMAGES.length);
+      const theta = (i / AK_IMAGES.length) * Math.PI * 2 * 3;
+      mesh.position.setFromSphericalCoords(1.2, phi, theta);
+      group.add(mesh);
+      circles.push(mesh);
+    }
+    for (let i = 0; i < AK_IMAGES.length; i++) createCircle(i);
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let rotX = -0.2;
+    let rotY = 0;
+    let isDrag = false;
+    let startX = 0, startY = 0;
+    let dragStartX = 0, dragStartY = 0;
+
+    function onResize() {
+      const nw = wrap.clientWidth || 400;
+      const nh = wrap.clientHeight || 400;
+      canvas.width = nw;
+      canvas.height = nh;
+      camera.aspect = 1;
+      camera.updateProjectionMatrix();
+      renderer.setSize(nw, nh);
+    }
+    window.addEventListener("resize", onResize);
+
+    function getMouse(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX ?? e.touches?.[0]?.clientX ?? 0) - rect.left;
+      const y = (e.clientY ?? e.touches?.[0]?.clientY ?? 0) - rect.top;
+      mouse.x = (x / rect.width) * 2 - 1;
+      mouse.y = -(y / rect.height) * 2 + 1;
+    }
+
+    function handleClick() {
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(circles);
+      if (hits.length) {
+        const mesh = hits[0].object;
+        mesh.userData.enlarged = !mesh.userData.enlarged;
+        mesh.scale.setScalar(mesh.userData.enlarged ? 2.5 : 1);
+      }
+    }
+
+    wrap.addEventListener("click", function(e) {
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+      if (Math.abs(dx) > 8 || Math.abs(dy) > 8) return;
+      getMouse(e);
+      handleClick();
+    });
+    wrap.addEventListener("mousedown", function(e) {
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      getMouse(e);
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(circles);
+      if (hits.length) return;
+      isDrag = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+    wrap.addEventListener("touchstart", function(e) {
+      dragStartX = e.touches[0].clientX;
+      dragStartY = e.touches[0].clientY;
+      getMouse(e);
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(circles);
+      if (hits.length) return;
+      isDrag = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    window.addEventListener("mouseup", function() { isDrag = false; });
+    window.addEventListener("touchend", function() { isDrag = false; }, { passive: true });
+    wrap.addEventListener("mousemove", function(e) {
+      if (!isDrag) return;
+      rotY += (e.clientX - startX) * 0.006;
+      rotX -= (e.clientY - startY) * 0.006;
+      rotX = Math.max(-1.2, Math.min(0.5, rotX));
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+    wrap.addEventListener("touchmove", function(e) {
+      if (!isDrag || !e.touches.length) return;
+      rotY += (e.touches[0].clientX - startX) * 0.005;
+      rotX -= (e.touches[0].clientY - startY) * 0.005;
+      rotX = Math.max(-1.2, Math.min(0.5, rotX));
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!isDrag) rotY += 0.002;
+      group.rotation.x = rotX;
+      group.rotation.y = rotY;
+      circles.forEach(function(m) {
+        m.lookAt(camera.position);
+      });
+      renderer.render(scene, camera);
+    }
+    animate();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initGlobe);
+  } else {
+    initGlobe();
+  }
+})();
+// #region agent log
+(function(){
+  try {
+    const processInMain = document.querySelector('main #process') !== null;
+    const formInMain = document.querySelector('main #screening-form') !== null;
+    fetch('http://127.0.0.1:7683/ingest/20c43ec5-7790-4703-b8e4-6a0f933c8566', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '774f80' },
+      body: JSON.stringify({
+        sessionId: '774f80',
+        runId: 'post-fix-verify',
+        hypothesisId: 'H1',
+        location: 'index.html:end',
+        message: 'DOM structure check',
+        data: { processInMain, formInMain },
+        timestamp: Date.now()
+      })
+    }).catch(()=>{});
+  } catch(e) {}
+})();
+// #endregion
+    </script>
+</body>
+</html>

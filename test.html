@@ -1,0 +1,185 @@
+<!-- Globe Section - Real 3D Earth with Photo Circles -->
+<section id="globe-section" class="relative py-10 md:py-16 overflow-hidden">
+    <style>
+      #globeCanvasWrap {
+        width: min(92vw, 420px);
+        height: min(92vw, 420px);
+        margin: 0 auto;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: grab;
+        touch-action: none;
+        background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 100%);
+      }
+      #globeCanvasWrap:active { cursor: grabbing; }
+      #globeCanvasWrap canvas { display: block; width: 100%; height: 100%; border-radius: 50%; }
+      @media (max-width: 640px) {
+        #globeCanvasWrap { width: min(94vw, 300px); height: min(94vw, 300px); }
+      }
+    </style>
+    <div class="max-w-6xl mx-auto px-4 lg:px-6 flex justify-center">
+      <div id="globeCanvasWrap">
+        <canvas id="globeCanvas"></canvas>
+      </div>
+    </div>
+  </section>
+  
+              <!-- Section from index2 - 3D Globe with Memories (aks images) -->
+              <section id="index2-globe-section" class="relative" style="min-height: 100vh; background: #02040a;">
+                  <div id="modalMemories" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 100; cursor: pointer; backdrop-filter: blur(15px);">
+                      <img id="modalMemories-img" src="" alt="بزرگنمایی" style="max-width: 85%; max-height: 85%; border: 2px solid rgba(0,212,255,0.5); border-radius: 20px; box-shadow: 0 0 50px rgba(0,212,255,0.3); transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);">
+                  </div>
+                  <div id="index2-globe-container" style="width: 100%; height: 100vh; position: relative;">
+                      <div id="memory-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 2;"></div>
+                  </div>
+                  <script>
+                  (function() {
+                      const AK_IMGS = ["5823371661175098670.jpg","5823371661175098672.jpg","5823371661175098674.jpg","5823371661175098675.jpg","5823371661175098676.jpg","5823371661175098678.jpg","5823371661175098679.jpg","5823371661175098680.jpg","5823371661175098682.jpg","5823371661175098689.jpg","5823371661175098690.jpg","5823371661175098691.jpg","5823371661175098693.jpg","5823371661175098694.jpg","5823371661175098695.jpg","5823371661175098697.jpg","5823371661175098698.jpg","5823371661175098699.jpg","5823371661175098700.jpg","5823371661175098701.jpg"];
+                      var BASE = "images/aks/";
+                      try { BASE = new URL("images/aks/", window.location.href).href; } catch(e){}
+                      function init() {
+                          var c = document.getElementById("index2-globe-container");
+                          if (!c || typeof THREE === "undefined") return;
+                          var scene = new THREE.Scene();
+                          var camera = new THREE.PerspectiveCamera(50, c.clientWidth/c.clientHeight, 0.1, 1000);
+                          camera.position.z = 20;
+                          var renderer = new THREE.WebGLRenderer({ antialias: true });
+                          renderer.setSize(c.clientWidth, c.clientHeight);
+                          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                          c.appendChild(renderer.domElement);
+                          renderer.domElement.style.position = "absolute";
+                          renderer.domElement.style.top = "0";
+                          renderer.domElement.style.left = "0";
+                          renderer.domElement.style.zIndex = "1";
+                          scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+                          var mainLight = new THREE.DirectionalLight(0x00d4ff, 1);
+                          mainLight.position.set(5, 3, 5);
+                          scene.add(mainLight);
+                          var starGeo = new THREE.BufferGeometry();
+                          var posArr = new Float32Array(2000 * 3);
+                          for (var i = 0; i < 2000 * 3; i++) posArr[i] = (Math.random() - 0.5) * 300;
+                          starGeo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
+                          var stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.15, color: 0xaaaaaa, transparent: true, opacity: 0.8 }));
+                          scene.add(stars);
+                          var globeGroup = new THREE.Group();
+                          scene.add(globeGroup);
+                          var globeGeo = new THREE.SphereGeometry(5, 64, 64);
+                          var globeMat = new THREE.MeshPhongMaterial({ color: 0x010510, transparent: true, opacity: 0.9, shininess: 20 });
+                          globeGroup.add(new THREE.Mesh(globeGeo, globeMat));
+                          var loader = new THREE.TextureLoader();
+                          loader.load("https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_lights_2048.png", function(t) {
+                              var canvas = document.createElement("canvas");
+                              var ctx = canvas.getContext("2d");
+                              var img = t.image;
+                              canvas.width = img.width;
+                              canvas.height = img.height;
+                              ctx.drawImage(img, 0, 0);
+                              var d = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                              var pos = [];
+                              var step = 12;
+                              for (var lat = 0; lat < canvas.height; lat += step)
+                                  for (var lon = 0; lon < canvas.width; lon += step) {
+                                      var idx = (lat * canvas.width + lon) * 4;
+                                      if ((d[idx]+d[idx+1]+d[idx+2])/3 > 20) {
+                                          var phi = (lat/canvas.height)*Math.PI;
+                                          var theta = (lon/canvas.width)*(Math.PI*2)+Math.PI;
+                                          pos.push(-5.08*Math.sin(phi)*Math.cos(theta), 5.08*Math.cos(phi), 5.08*Math.sin(phi)*Math.sin(theta));
+                                      }
+                                  }
+                              var dotGeo = new THREE.BufferGeometry();
+                              dotGeo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+                              globeGroup.add(new THREE.Points(dotGeo, new THREE.PointsMaterial({ size: 0.06, color: 0x00d4ff, transparent: true, opacity: 0.8 })));
+                          });
+                          var atmoGeo = new THREE.SphereGeometry(5.3, 64, 64);
+                          globeGroup.add(new THREE.Mesh(atmoGeo, new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.05, side: THREE.BackSide })));
+                          var memoryGroup = new THREE.Group();
+                          globeGroup.add(memoryGroup);
+                          var overlay = document.getElementById("memory-overlay");
+                          var overlayEls = [];
+                          var proj = new THREE.Vector3();
+                          for (var i = 0; i < 20; i++) {
+                              var phi = Math.acos(-1 + (2 * i) / 20);
+                              var theta = Math.sqrt(20 * Math.PI) * phi;
+                              var r = 7.5;
+                              var x = r * Math.sin(phi) * Math.cos(theta);
+                              var y = r * Math.sin(phi) * Math.sin(theta);
+                              var z = r * Math.cos(phi);
+                              var container = new THREE.Group();
+                              container.position.set(x, y, z);
+                              container.add(new THREE.Mesh(new THREE.RingGeometry(0.7, 0.75, 32), new THREE.MeshBasicMaterial({ color: 0x00d4ff, side: THREE.DoubleSide })));
+                              var imgPath = BASE + AK_IMGS[i];
+                              var hitArea = new THREE.Mesh(new THREE.CircleGeometry(0.75, 16), new THREE.MeshBasicMaterial({ visible: false }));
+                              hitArea.userData = { url: imgPath };
+                              container.add(hitArea);
+                              memoryGroup.add(container);
+                              var el = document.createElement("div");
+                              el.style.cssText = "position:absolute;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;overflow:hidden;border:2px solid #00d4ff;pointer-events:auto;cursor:pointer;box-sizing:border-box;";
+                              var img = document.createElement("img");
+                              img.src = imgPath;
+                              img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block;";
+                              img.draggable = false;
+                              el.appendChild(img);
+                              el.dataset.url = imgPath;
+                              el.addEventListener("click", function(e) {
+                                  e.stopPropagation();
+                                  var url = this.dataset.url;
+                                  document.getElementById("modalMemories-img").src = url;
+                                  document.getElementById("modalMemories").style.display = "flex";
+                                  document.getElementById("modalMemories").querySelector("img").style.transform = "scale(1)";
+                              });
+                              overlay.appendChild(el);
+                              overlayEls.push({ container: container, el: el });
+                          }
+                          var isDrag = false;
+                          var prev = { x: 0, y: 0 };
+                          function onMove(e) {
+                              var cx = e.clientX || (e.touches && e.touches[0].clientX);
+                              var cy = e.clientY || (e.touches && e.touches[0].clientY);
+                              if (isDrag) {
+                                  globeGroup.rotation.y += (cx - prev.x) * 0.005;
+                                  globeGroup.rotation.x += (cy - prev.y) * 0.005;
+                                  prev.x = cx; prev.y = cy;
+                              }
+                          }
+                          c.addEventListener("mousedown", function(e) { if (!e.target.closest("#memory-overlay [data-url]")) { isDrag = true; prev.x = e.clientX; prev.y = e.clientY; } });
+                          c.addEventListener("mousemove", onMove);
+                          window.addEventListener("mouseup", function() { isDrag = false; });
+                          c.addEventListener("touchstart", function(e) { if (!e.target.closest("#memory-overlay [data-url]")) { isDrag = true; prev.x = e.touches[0].clientX; prev.y = e.touches[0].clientY; } }, { passive: true });
+                          c.addEventListener("touchmove", onMove, { passive: true });
+                          window.addEventListener("touchend", function() { isDrag = false; }, { passive: true });
+                          window.addEventListener("resize", function() {
+                              var w = c.clientWidth; var h = c.clientHeight;
+                              camera.aspect = w / h;
+                              camera.updateProjectionMatrix();
+                              renderer.setSize(w, h);
+                          });
+                          document.getElementById("modalMemories").addEventListener("click", function() {
+                              this.style.display = "none";
+                              this.querySelector("img").style.transform = "scale(0.8)";
+                          });
+                          function animate() {
+                              requestAnimationFrame(animate);
+                              if (!isDrag) globeGroup.rotation.y += 0.001;
+                              stars.rotation.y += 0.0001;
+                              memoryGroup.children.forEach(function(g) { g.lookAt(camera.position); });
+                              camera.updateMatrixWorld();
+                              var w = c.clientWidth;
+                              var h = c.clientHeight;
+                              overlayEls.forEach(function(o) {
+                                  o.container.getWorldPosition(proj);
+                                  proj.project(camera);
+                                  var px = (proj.x + 1) * 0.5 * w;
+                                  var py = (1 - proj.y) * 0.5 * h;
+                                  o.el.style.left = px + "px";
+                                  o.el.style.top = py + "px";
+                                  o.el.style.visibility = proj.z > 1 || proj.z < -1 ? "hidden" : "visible";
+                              });
+                              renderer.render(scene, camera);
+                          }
+                          animate();
+                      }
+                      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+                      else init();
+                  })();
+                  </script>
+              </section>
